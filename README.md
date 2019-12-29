@@ -14,6 +14,8 @@ pip install git+https://github.com:Hanaasagi/papurika.git
 
 ### Basics
 
+Use the quick way to mock.
+
 ```Python
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
     def SayHello(self, request, context):
@@ -21,10 +23,34 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
             message="Hello, %s!" % request.name
         )
 
+
+@papurika.activite
+def test_shortcut():
+    papurika.add("localhost:50051", Greeter)
+    with grpc.insecure_channel("localhost:50051") as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.SayHello(helloworld_pb2.HelloRequest(name="you"))
+        assert response.message == "Hello, you!"
+```
+
+Mock single service.
+
+```Python
 with ServiceMock("localhost:50051", Greeter):
     with grpc.insecure_channel("localhost:50051") as channel:
         stub = helloworld_pb2_grpc.GreeterStub(channel)
         response = stub.SayHello(helloworld_pb2.HelloRequest(name="you"))
         assert response.message == "Hello, you!"
 
+```
+
+Mock multi service.
+
+```Python
+with ServiceMockGroup() as services:
+    services.add("localhost:50051", Greeter)
+    with grpc.insecure_channel("localhost:50051") as channel:
+        stub = helloworld_pb2_grpc.GreeterStub(channel)
+        response = stub.SayHello(helloworld_pb2.HelloRequest(name="you"))
+        assert response.message == "Hello, you!"
 ```
