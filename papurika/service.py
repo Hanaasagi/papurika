@@ -6,8 +6,6 @@ from unittest.mock import patch
 from papurika.server import ServerMock
 from papurika.channel import ChannelMock
 
-from typing import Callable, Optional
-
 
 """
 Mock gRPC services
@@ -16,12 +14,7 @@ Mock gRPC services
 
 class ServiceMock:
     def __init__(
-        self,
-        listen_at: str,
-        service,
-        *,
-        callback: Optional[Callable] = None,
-        assert_all_method_fired: bool = True,
+        self, listen_at: str, service, *, assert_all_method_fired: bool = True,
     ) -> None:
         """
         :param listen_at:
@@ -49,6 +42,10 @@ class ServiceMock:
 
         inject = getattr(parent_class_module, inject_name)
         inject(self._standin(), self._server)
+
+    @property
+    def channel(self):
+        return self._channel
 
     def start(self):
         # TODO secure_channel
@@ -91,7 +88,48 @@ class ServiceMock:
 
 
 class ServiceMockGroup:
-    pass
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self._services = {}
+        self._calls = []
+
+    def add(self, listen_at, service, *, assert_all_method_fired: bool = True):
+        service_mock = ServiceMock(
+            listen_at, service, assert_all_method_fired=assert_all_method_fired
+        )
+        self._services[listen_at] = service_mock
+
+    def _dispatch(self, target):
+        return self._services.get(target, None)
+
+    def start(self):
+        def _insecure_channel(target, options=None, compression=None):
+            service = self._dispatch(target)
+            if service is not None:
+                return service.channel
+            return grpc.insecure_channel(target, options, compression)
+
+        self._patcher = patch(
+            target="grpc.insecure_channel", new=_insecure_channel,
+        )
+        self._patcher.start()
+
+    def stop(self, allow_assert):
+        self._patcher.stop()
+
+        if not allow_assert:
+            return
+
+    def __enter__(self):
+        self.start()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        success = exc_type is None
+        self.stop(allow_assert=success)
+        return success
 
 
 # _default_mock = ServiceMock()
