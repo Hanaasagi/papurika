@@ -9,7 +9,7 @@
 
 ```Bash
 # Require pip>=19.0
-pip install git+https://github.com:Hanaasagi/papurika.git
+pip install git+https://github.com/Hanaasagi/papurika.git
 ```
 
 ### Basics
