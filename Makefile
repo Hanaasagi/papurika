@@ -1,3 +1,6 @@
+format:
+	black papurika tests
+
 lint:
 	poetry run black --check --diff .
 	poetry run flake8
