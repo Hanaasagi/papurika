@@ -6,8 +6,8 @@ from papurika import ServiceMockGroup
 
 
 def test_mock_single(import_path):
-    from .wd import helloworld_pb2
-    from .wd import helloworld_pb2_grpc
+    from .pb import helloworld_pb2
+    from .pb import helloworld_pb2_grpc
 
     class Greeter(helloworld_pb2_grpc.GreeterServicer):
         def SayHello(self, request, context):
@@ -23,8 +23,8 @@ def test_mock_single(import_path):
 
 
 def test_mock_group(import_path):
-    from .wd import helloworld_pb2
-    from .wd import helloworld_pb2_grpc
+    from .pb import helloworld_pb2
+    from .pb import helloworld_pb2_grpc
 
     class Greeter(helloworld_pb2_grpc.GreeterServicer):
         def SayHello(self, request, context):
@@ -42,8 +42,8 @@ def test_mock_group(import_path):
 
 @papurika.activite
 def test_shortcut(import_path):
-    from .wd import helloworld_pb2
-    from .wd import helloworld_pb2_grpc
+    from .pb import helloworld_pb2
+    from .pb import helloworld_pb2_grpc
 
     class Greeter(helloworld_pb2_grpc.GreeterServicer):
         def SayHello(self, request, context):
