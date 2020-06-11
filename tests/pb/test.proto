@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package test;
+
+message Request {
+    int64 client_id      = 1;
+    string request_data  = 2;
+}
+
+message Response {
+    int64 server_id      = 1;
+    string response_data = 2;
+}
+
+// gRpc test service.
+service GRPCTest {
+
+    // SingleMethod is unary-unary method.
+    // The client can only send request once, and the server can only respond once.
+    rpc SingleMethod (Request) returns (Response) {
+
+    };
+
+    // ClientStreamingMethod is stream-unary method.
+    // The client can transfer data to the server several times, but the server can only return a response once.
+    rpc ClientStreamingMethod (stream Request) returns (Response) {
+
+    };
+
+    // ServerStreamingMethod is unary-stream method.
+    // The client can only transmit data to the server at one time, but the server can return the response many times.
+    rpc ServerStreamingMethod (Request) returns (stream Response) {
+
+    };
+
+    // BidirectionalStreamingMethod is stream-stream method.
+    // Both client and server can send and receive data to each other multiple times.
+    rpc BidirectionalStreamingMethod (stream Request) returns (stream Response) {
+
+    };
+}
