@@ -43,6 +43,9 @@ class ChannelMock:
 
         return fake_handler
 
+    def close(self) -> None:
+        """dummay close"""
+
     def unary_unary(
         self, method, request_serializer=None, response_deserializer=None,
     ):
