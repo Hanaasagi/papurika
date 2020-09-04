@@ -43,10 +43,28 @@ class ChannelMock:
 
         return fake_handler
 
+    def close(self) -> None:
+        """dummay close"""
+
     def unary_unary(
         self, method, request_serializer=None, response_deserializer=None,
     ):
         return self._handle("unary_unary", method)
+
+    def unary_stream(
+        self, method, request_serializer=None, response_deserializer=None,
+    ):
+        return self._handle("unary_stream", method)
+
+    def stream_unary(
+        self, method, request_serializer=None, response_deserializer=None,
+    ):
+        return self._handle("stream_unary", method)
+
+    def stream_stream(
+        self, method, request_serializer=None, response_deserializer=None,
+    ):
+        return self._handle("stream_stream", method)
 
     def __enter__(self):
         return self

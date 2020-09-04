@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture(scope="session")
 def import_path() -> None:
-    path = os.path.join(os.path.dirname(__file__), "wd/")
+    path = os.path.join(os.path.dirname(__file__), "pb/")
     orig_path = sys.path[:]
     try:
         sys.path.insert(0, path)
